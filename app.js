@@ -69,4 +69,27 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+// Upload file to DB
+// NOTE: upload.single() uploads just a single file, but you can upload multiple files as an array
+// NOTE: As a parameter to upload.single() you want to pass in the "name" attribute of the file field in the form
+app.post('/upload', upload.single('file'), (req, res) => {
+    // res.json({file: req.file})
+    res.redirect('/')
+})
+
+
+// Display all files as an array of JSON
+app.get('/files/:filename', (req, res) => {
+    gfs.files.findOne({filename: req.params.filename}).toArray((err, files) => {
+        //Check if any files exist
+        if(!files || files.length === 0){
+            return res.status(404).json({
+                err: 'No files exist'
+            })
+        }
+      // Files exist
+      return res.json(files);
+      });
+})
+
 app.listen(port, () => console.log('Server Started on 5000'));
