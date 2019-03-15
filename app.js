@@ -10,6 +10,9 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const port = 5000
 
+// Multer's GridFS storage engine: https://github.com/devconcept/multer-gridfs-storage
+// gridfs-stream: https://github.com/aheckmann/gridfs-stream
+
 // Initialize grid fs stream
 let gfs;
 
@@ -57,14 +60,6 @@ const storage = new GridFsStorage({
 const upload = multer({storage})
 
 
-// mongoose.connect(DBURL, { useNewUrlParser: true }, (err, db) => {
-//     assert.equal(err, null);
-//     console.log('Successfully Connected to the Local Database.');
-// });
-
-
-
-
 app.get('/', (req, res) => {
     res.render('index');
 });
@@ -104,7 +99,31 @@ app.get('/files/:filename', (req, res) => {
         //File exists
         return res.json(file)
 
-    })
-})
+    });
+});
+
+
+// Route for images that displays the ACTUAL image not just its data. For that we use gfs.createReadStream
+// Display Single file object
+app.get('/image/:filename', (req, res) => {
+    gfs.files.findOne({filename: req.params.filename}, (err, file) => {
+        //Check if any files exist
+        if(!file || file.length === 0){
+            return res.status(404).json({
+                err: 'No file exist'
+            })
+        }
+        // Check if image
+        if(file.contentType === 'image/jpeg' || file.contentType === 'image/png'){
+            // Read output to broswer
+            const readstream = gfs.createReadStream(file.filename);
+            readstream.pipe(res);
+        }else{
+            res.status(404).json({err: 'Not an image'})
+        }
+
+    });
+});
+
 
 app.listen(port, () => console.log('Server Started on 5000'));
