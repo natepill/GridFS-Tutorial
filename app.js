@@ -61,7 +61,29 @@ const upload = multer({storage})
 
 
 app.get('/', (req, res) => {
-    res.render('index');
+    gfs.files.find().toArray((err, files) => {
+        //Check if any files exist
+        if(!files || files.length === 0){
+            res.render('index', {files: false});
+        }else{
+            files.map(file => {
+                if(file.contentType === "image/jpeg" || file.contentType === "image/png")
+                {
+                    file.isImage = true;
+                }
+                else{
+                    file.isImage = false;
+                }
+
+            })
+
+            res.render('index', {files: false});
+        }
+        
+      // Files exist
+      return res.json(files);
+      });
+    })
 });
 
 // Upload file to DB
