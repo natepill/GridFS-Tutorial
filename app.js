@@ -79,8 +79,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 
 // Display all files as an array of JSON
-app.get('/files/:filename', (req, res) => {
-    gfs.files.findOne({filename: req.params.filename}).toArray((err, files) => {
+app.get('/files', (req, res) => {
+    gfs.files.find().toArray((err, files) => {
         //Check if any files exist
         if(!files || files.length === 0){
             return res.status(404).json({
