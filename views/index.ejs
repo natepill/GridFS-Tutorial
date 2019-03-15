@@ -13,7 +13,7 @@
         width: 100%;
       }
     </style>
-    
+
     <title>Mongo FS</title>
   </head>
   <body>
@@ -37,6 +37,7 @@
                     <% } else { %>
                       <%= file.filename %>
                         <% } %>
+                        <!-- Using method override to DELETE instead of POST-->
                           <form method="POST" action="/files/<%= file._id %>?_method=DELETE">
                             <button class="btn btn-danger btn-block mt-4">Delete</button>
                           </form>
