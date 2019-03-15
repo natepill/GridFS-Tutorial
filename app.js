@@ -92,4 +92,19 @@ app.get('/files', (req, res) => {
       });
 })
 
+
+app.get('/files/:filename', (req, res) => {
+    gfs.files.findOne({filename: req.params.filename}, (err, file) => {
+        //Check if any files exist
+        if(!file || file.length === 0){
+            return res.status(404).json({
+                err: 'No file exist'
+            })
+        }
+        //File exists
+        return res.json(file)
+
+    })
+})
+
 app.listen(port, () => console.log('Server Started on 5000'));
