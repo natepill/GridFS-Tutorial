@@ -8,7 +8,8 @@ const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-const port = 5000
+const port = 3000
+
 
 // Multer's GridFS storage engine: https://github.com/devconcept/multer-gridfs-storage
 // gridfs-stream: https://github.com/aheckmann/gridfs-stream
@@ -24,6 +25,7 @@ app.set('view engine', 'ejs');
 
 //Mongo URI
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost/gridfs';
+
 
 //Create mongo connection
 const conn = mongoose.createConnection(mongoURI);
@@ -85,8 +87,8 @@ app.get('/', (req, res) => {
 // NOTE: upload.single() uploads just a single file, but you can upload multiple files as an array
 // NOTE: As a parameter to upload.single() you want to pass in the "name" attribute of the file field in the form
 app.post('/upload', upload.single('file'), (req, res) => {
-    // res.json({file: req.file})
-    res.redirect('/')
+    res.json({file: req.file})
+    // res.redirect('/')
 })
 
 
@@ -158,4 +160,4 @@ app.delete('/files/:id', (req,res) => {
 
 
 
-app.listen(port, () => console.log('Server Started on 5000'));
+app.listen(port, () => console.log(`Server Started on ${port}`));
